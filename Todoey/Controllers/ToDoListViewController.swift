@@ -47,9 +47,6 @@ class ToDoListViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
-//        context.delete(itemArray[indexPath.row])
-//        itemArray.remove(at: indexPath.row)
-        
         itemArray[indexPath.row].done = !itemArray[indexPath.row].done
         
         self.saveItems()
@@ -71,6 +68,7 @@ class ToDoListViewController: UITableViewController {
             let newItem = Item(context: self.context)
             newItem.done = false
             newItem.title = textField.text!
+            newItem.dateCreated = Date()
             newItem.parentCategory = self.selectedCategory
             self.itemArray.append(newItem)
                 
@@ -138,7 +136,7 @@ extension ToDoListViewController: UISearchBarDelegate {
         
         let predicate = NSPredicate(format: "title CONTAINS[cd] %@", searchBar.text!)
         
-        request.sortDescriptors = [NSSortDescriptor(key: "title", ascending: true)]
+        request.sortDescriptors = [NSSortDescriptor(key: "dateCreated", ascending: true)]
         
         loadItems(with: request, predicate: predicate)
     }

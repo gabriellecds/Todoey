@@ -8,7 +8,7 @@
 import UIKit
 import CoreData
 
-class CategoryViewController: UITableViewController {
+class CategoryViewController: SwipeTableViewController {
     
     var categories = [Category]()
     
@@ -18,6 +18,8 @@ class CategoryViewController: UITableViewController {
         super.viewDidLoad()
         
         loadCategories()
+        
+        tableView.rowHeight = 70.0
 
     }
     
@@ -30,7 +32,7 @@ class CategoryViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        let cell = tableView.dequeueReusableCell(withIdentifier: "CategoryCell", for: indexPath)
+        let cell = super.tableView(tableView, cellForRowAt: indexPath)
         
         cell.textLabel?.text = categories[indexPath.row].name
         
@@ -78,6 +80,20 @@ class CategoryViewController: UITableViewController {
         tableView.reloadData()
     }
     
+    //MARK: - Delete Data from Swipe
+    
+    override func updateModel(at indexPath: IndexPath) {
+        
+        self.context.delete(self.categories[indexPath.row])
+        self.categories.remove(at: indexPath.row)
+        
+        do {
+         try self.context.save()
+        } catch {
+         print("Error saving context after deletion \(error)")
+        }
+    }
+    
     //MARK: - Add new Items in Category
     
     @IBAction func addButtonPressed(_ sender: UIBarButtonItem) {
@@ -103,5 +119,4 @@ class CategoryViewController: UITableViewController {
         
         present(alert, animated: true, completion: nil)
     }
-    
 }
