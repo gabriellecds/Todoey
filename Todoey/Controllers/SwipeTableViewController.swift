@@ -6,7 +6,7 @@ class SwipeTableViewController: UITableViewController, SwipeTableViewCellDelegat
     override func viewDidLoad() {
         super.viewDidLoad()
         
-       // tableView.rowHeight = 70.0
+        tableView.rowHeight = 70.0
     }
     
     // TableView Datasource Methods
@@ -48,7 +48,6 @@ class SwipeTableViewController: UITableViewController, SwipeTableViewCellDelegat
     
     // Método auxiliar para atualizar o modelo de dados após exclusão
     func updateModel(at indexPath: IndexPath) {
-        // O codigo está em Category View Controller, substituindo o que
-        // estaria aqui com o "override". 
+        // metodo sobrescrito (override) pelas subclasses Category e ToDoList Views Controllers
     }
 }

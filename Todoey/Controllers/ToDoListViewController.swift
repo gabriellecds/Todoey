@@ -7,8 +7,9 @@
 
 import UIKit
 import CoreData
+import SwipeCellKit
 
-class ToDoListViewController: UITableViewController {
+class ToDoListViewController: SwipeTableViewController {
     
     var itemArray = [Item]()
     
@@ -34,7 +35,9 @@ class ToDoListViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        let cell = tableView.dequeueReusableCell(withIdentifier: "ToDoItemCell", for: indexPath)
+        // herdando a celula da super classe (.super) para que seja uma celula swipe
+        let cell = super.tableView(tableView, cellForRowAt: indexPath)
+        
         let item = itemArray[indexPath.row]
         
         cell.textLabel?.text = item.title
@@ -124,7 +127,18 @@ class ToDoListViewController: UITableViewController {
         
         tableView.reloadData()
     }
-}
+    //MARK: - Delete Data from Swipe
+
+        override func updateModel(at indexPath: IndexPath) {
+            
+            context.delete(itemArray[indexPath.row])
+            itemArray.remove(at: indexPath.row)
+            
+            saveItems()
+            
+        }
+    }
+
 
 //MARK: - Search Bar Methods
 
