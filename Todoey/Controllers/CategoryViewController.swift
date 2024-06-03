@@ -22,6 +22,30 @@ class CategoryViewController: SwipeTableViewController {
  
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        if let navBar = navigationController?.navigationBar {
+     
+            let defaultColor = UIColor.black
+            navBar.barTintColor = defaultColor
+            navBar.tintColor = ContrastColorOf(defaultColor, returnFlat: true)
+            navBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: ContrastColorOf(defaultColor, returnFlat: true)]
+            
+            if #available(iOS 15.0, *) {
+                let appearance = UINavigationBarAppearance()
+                appearance.configureWithOpaqueBackground()
+                appearance.backgroundColor = defaultColor
+                appearance.titleTextAttributes = [NSAttributedString.Key.foregroundColor: ContrastColorOf(defaultColor, returnFlat: true)]
+                appearance.largeTitleTextAttributes = [NSAttributedString.Key.foregroundColor: ContrastColorOf(defaultColor, returnFlat: true)]
+                navBar.standardAppearance = appearance
+                navBar.scrollEdgeAppearance = appearance
+            }
+            
+            title = "Todoey"
+        }
+    }
+    
     //MARK: - TableView Datasource Methods
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
