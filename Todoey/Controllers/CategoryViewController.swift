@@ -7,6 +7,7 @@
 
 import UIKit
 import CoreData
+import ChameleonFramework
 
 class CategoryViewController: SwipeTableViewController {
     
@@ -31,8 +32,20 @@ class CategoryViewController: SwipeTableViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         let cell = super.tableView(tableView, cellForRowAt: indexPath)
+        let category = categories[indexPath.row]
         
-        cell.textLabel?.text = categories[indexPath.row].name
+        cell.textLabel?.text = category.name
+        
+        if let colorHex = category.color, let color = UIColor(hexString: colorHex){
+            cell.backgroundColor = color
+            cell.textLabel?.textColor = ContrastColorOf(color, returnFlat: true)
+        } 
+        else {
+            let color = UIColor.randomFlat()
+            category.color = color.hexValue()
+            cell.backgroundColor = color
+            cell.textLabel?.textColor = ContrastColorOf(color, returnFlat: true)
+        }
         
         return cell
         
@@ -92,7 +105,7 @@ class CategoryViewController: SwipeTableViewController {
         }
     }
     
-    //MARK: - Add new Items in Category
+    //MARK: - Add new Categories
     
     @IBAction func addButtonPressed(_ sender: UIBarButtonItem) {
         
@@ -104,8 +117,9 @@ class CategoryViewController: SwipeTableViewController {
         
             let newCategory = Category(context: self.context)
             newCategory.name = textField.text!
-            self.categories.append(newCategory)
+            newCategory.color = UIColor.randomFlat().hexValue()
             
+            self.categories.append(newCategory)
             self.saveCategories()
         }
         

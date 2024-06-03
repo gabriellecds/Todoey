@@ -8,10 +8,13 @@
 import UIKit
 import CoreData
 import SwipeCellKit
+import ChameleonFramework
 
 class ToDoListViewController: SwipeTableViewController {
     
     var itemArray = [Item]()
+    
+    @IBOutlet weak var searchBar: UISearchBar!
     
     var selectedCategory: Category? {
         didSet{
@@ -24,8 +27,68 @@ class ToDoListViewController: SwipeTableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        print(FileManager.default.urls(for: .documentDirectory, in: .userDomainMask))
+        tableView.separatorStyle = .none
+ 
     }
+    
+    override func viewWillAppear(_ animated: Bool) {
+            super.viewWillAppear(animated)
+            
+            if let colorHex = selectedCategory?.color, let navBar = navigationController?.navigationBar {
+                
+                guard let navBarColor = UIColor(hexString: colorHex) else { fatalError("Invalid color hex string.") }
+                
+                // Update the navigation bar color
+                navBar.barTintColor = navBarColor
+                navBar.tintColor = ContrastColorOf(navBarColor, returnFlat: true)
+                navBar.largeTitleTextAttributes = [NSAttributedString.Key.foregroundColor: ContrastColorOf(navBarColor, returnFlat: true)]
+                
+                if #available(iOS 15.0, *) {
+                    let appearance = UINavigationBarAppearance()
+                    appearance.configureWithOpaqueBackground()
+                    appearance.backgroundColor = navBarColor
+                    appearance.titleTextAttributes = [NSAttributedString.Key.foregroundColor: ContrastColorOf(navBarColor, returnFlat: true)]
+                    appearance.largeTitleTextAttributes = [NSAttributedString.Key.foregroundColor: ContrastColorOf(navBarColor, returnFlat: true)]
+                    navBar.standardAppearance = appearance
+                    navBar.scrollEdgeAppearance = appearance
+                }
+                
+                title = selectedCategory?.name
+                searchBar.barTintColor = navBarColor
+                
+                if let textField = searchBar.value(forKey: "searchField") as? UITextField {
+                    textField.backgroundColor = UIColor.white  // Cor de fundo do campo de texto
+                    textField.textColor = UIColor.black  // Cor do texto
+                    textField.tintColor = UIColor.black  // Cor do cursor
+                    textField.attributedPlaceholder = NSAttributedString(string: "Search", attributes: [NSAttributedString.Key.foregroundColor: UIColor.lightGray])  // Cor do placeholder
+                }
+            }
+        }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+            super.viewWillDisappear(animated)
+            
+            if let navBar = navigationController?.navigationBar {
+         
+                let defaultColor = UIColor.systemBlue
+                navBar.barTintColor = defaultColor
+                navBar.tintColor = ContrastColorOf(defaultColor, returnFlat: true)
+                navBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: ContrastColorOf(defaultColor, returnFlat: true)]
+                
+                if #available(iOS 15.0, *) {
+                    let appearance = UINavigationBarAppearance()
+                    appearance.configureWithOpaqueBackground()
+                    appearance.backgroundColor = defaultColor
+                    appearance.titleTextAttributes = [NSAttributedString.Key.foregroundColor: ContrastColorOf(defaultColor, returnFlat: true)]
+                    appearance.largeTitleTextAttributes = [NSAttributedString.Key.foregroundColor: ContrastColorOf(defaultColor, returnFlat: true)]
+                    navBar.standardAppearance = appearance
+                    navBar.scrollEdgeAppearance = appearance
+                }
+                
+                title = "Todoey"
+            }
+        }
+        
     
     //MARK: - TableView Datasource Methods
     
@@ -43,6 +106,12 @@ class ToDoListViewController: SwipeTableViewController {
         cell.textLabel?.text = item.title
         cell.accessoryType = item.done ? .checkmark : .none
         
+        if let colour = UIColor(hexString: selectedCategory!.color!)?.darken(byPercentage: CGFloat(indexPath.row)/CGFloat(itemArray.count)){
+            cell.backgroundColor = colour
+            
+            cell.textLabel?.textColor = ContrastColorOf(colour, returnFlat: true)
+        }
+   
         return cell
     }
     
