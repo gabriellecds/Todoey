@@ -1,6 +1,4 @@
-
 #import "UIAppearance+Swift.h"
-#import <CloudKit/CloudKit.h>
 
 @implementation UIView (UIViewAppearance_Swift)
 
